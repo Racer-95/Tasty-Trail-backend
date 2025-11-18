@@ -8,11 +8,11 @@ app.use(express.json());
 
 const cors = require('cors');
 
-app.use(cors({
-  origin: 'http://localhost:3001',  // frontend url
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(cors());
+
+app.get("/healthz", (req, res) => {
+    res.status(200).send("OK");
+  });
 
 
 app.post('/signup', async (req, res) => {
