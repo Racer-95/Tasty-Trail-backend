@@ -9,7 +9,7 @@ app.use(express.json());
 const cors = require('cors');
 
 app.use(cors({
-  origin: 'http://localhost:3001',  // your frontend URL
+  origin: 'http://localhost:3001',  // frontend url
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -17,16 +17,14 @@ app.use(cors({
 
 app.post('/signup', async (req, res) => {
     const { name, email, password } = req.body
-    // Need to checj whether user already exists
+    
     const user = await prisma.food.findUnique({
         where: { email }
     })
     if (user) {
         return res.status(422).json({ message: "User Already exists" })
     } else {
-        // In this case we need to insert or add user in db 
-        // we do not want to store password directly we want to hased it first
-        // hashing the password
+        
         try {
             const hashedPassword = await bcrypt.hash(password, 10)
 
@@ -50,17 +48,17 @@ app.post('/signup', async (req, res) => {
 
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
-    // we need to check use existt
+    //  user existt
     const user = await prisma.food.findUnique({
         where: { email }
     })
     if (!user) {
         return res.status(422).json({ message: "User does not exists" })
     } else {
-        // password check
+        // password 
         const isPasswrodMatch = bcrypt.compareSync(password, user.password);
         if (isPasswrodMatch) {
-            //  read jsonweb token how to create jwt token
+            // jwt token
             const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY, {expiresIn: '7d'})
             const refresh_token = jwt.sign({ email: user.email }, process.env.refresh_SECRET_KEY, {expiresIn: '30d'})
 
@@ -91,7 +89,7 @@ app.get("/users", isValidToken, async (req, res) => {
     return res.status(200).json({ data: users })
 })
 
-const port = 3000
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server started on http://localhost:${port}`)
 });
