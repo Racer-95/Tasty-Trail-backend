@@ -20,4 +20,22 @@ model Food {
   email   String   @unique
   password   String 
   createdAt DateTime   @default(now())
+  recipes   Recipe[]  @relation("UserRecipes")
+}
+
+model Recipe {
+  id            Int      @id @default(autoincrement())
+  title         String
+  description   String   // short description
+  ingredients   String   // store multiline text OR change to String[]
+  steps         String   // store multiline steps OR change to String[]
+  cusine        String
+  category      String
+  likes         Int
+  cookTime      Int
+  imageUrl      String   // file path or cloud URL
+  createdAt     DateTime @default(now())
+
+  authorId Int?
+  author   Food?        @relation("UserRecipes", fields: [authorId], references: [id])
 }
